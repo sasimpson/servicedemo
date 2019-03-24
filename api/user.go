@@ -19,3 +19,10 @@ func (h *Handler) UserGetHandler() http.Handler {
 		http.Error(w, "Not Implemented", http.StatusNotImplemented)
 	})
 }
+
+//UserNewHandler will return the data for a single user record
+func (h *Handler) UserNewHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Not Implemented", http.StatusNotImplemented)
+	})
+}
