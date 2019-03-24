@@ -5,10 +5,10 @@ import "time"
 type Env struct {
 }
 type User struct {
-	ID        int
-	FirstName string
-	LastName  string
-	Birthday  time.Time
+	ID        int       `json:"id"`
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
+	Birthday  time.Time `json:"birthday"`
 }
 
 type UserModel interface {
