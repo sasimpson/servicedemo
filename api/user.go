@@ -2,7 +2,9 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/sasimpson/servicedemo/models"
@@ -32,14 +34,51 @@ func (h *Handler) UserAllHandler() http.Handler {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-		return
 	})
 }
 
 //UserGetHandler will return the data for a single user record
 func (h *Handler) UserGetHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, "Not Implemented", http.StatusNotImplemented)
+		var (
+			idVar string
+			id    int
+			err   error
+			user  *models.User
+		)
+
+		vars := mux.Vars(r)
+		log.Println(vars)
+
+		if idVar := vars["id"]; idVar == "" {
+			log.Printf("idVar: %s", idVar)
+			http.Error(w, "no id for user", http.StatusBadRequest)
+			return
+		}
+
+		if id, err = strconv.Atoi(idVar); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+
+		if user, err = h.User.Get(id); err != nil {
+			if err == models.ErrUserNotFound {
+				http.Error(w, "User not found", http.StatusNotFound)
+				return
+			}
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if user == nil {
+			http.Error(w, "User not found", http.StatusNotFound)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		err = json.NewEncoder(w).Encode(user)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	})
 }
 

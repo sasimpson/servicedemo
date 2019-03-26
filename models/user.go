@@ -1,9 +1,13 @@
 package models
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type Env struct {
 }
+
 type User struct {
 	ID        int       `json:"id"`
 	FirstName string    `json:"first_name"`
@@ -15,3 +19,7 @@ type UserModel interface {
 	All() (*[]User, error)
 	Get(id int) (*User, error)
 }
+
+var (
+	ErrUserNotFound = errors.New("User Not Found")
+)

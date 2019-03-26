@@ -2,11 +2,13 @@ package api_test
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/sasimpson/servicedemo/models"
 
 	"github.com/sasimpson/servicedemo/api"
@@ -91,23 +93,57 @@ func TestUserGetHandler(t *testing.T) {
 	testCases := []struct {
 		desc         string
 		handler      api.Handler
+		requestID    int
 		responseCode int
+		responseBody string
 	}{
 		{
-			desc: "",
+			desc: "get no",
 			handler: api.Handler{
-				User: &mock.UserMock{},
+				User: &mock.UserMock{
+					User: nil,
+				},
 			},
-			responseCode: http.StatusNotImplemented,
+			requestID:    1,
+			responseCode: http.StatusNotFound,
+		},
+		{
+			desc: "get error",
+			handler: api.Handler{
+				User: &mock.UserMock{
+					Error: errors.New("Unknown Error"),
+				},
+			},
+			requestID:    1,
+			responseCode: http.StatusInternalServerError,
+		},
+		{
+			desc: "get user",
+			handler: api.Handler{
+				User: &mock.UserMock{
+					User: &models.User{
+						ID:        1,
+						FirstName: "test",
+						LastName:  "user",
+						Birthday:  time.Date(1978, 2, 20, 0, 0, 0, 0, time.UTC),
+					},
+				},
+			},
+			requestID:    1,
+			responseCode: http.StatusOK,
 		},
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-			req, err := http.NewRequest("GET", "/user/1", nil)
+			req, err := http.NewRequest("GET", fmt.Sprintf("/user/%d", tC.requestID), nil)
 			if err != nil {
 				t.Errorf("handler returned an error when it shouldn't")
 			}
 
+			requestVars := map[string]string{
+				"id": string(tC.requestID),
+			}
+			req = mux.SetURLVars(req, requestVars)
 			rr := httptest.NewRecorder()
 			handler := tC.handler.UserGetHandler()
 
