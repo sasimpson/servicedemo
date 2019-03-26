@@ -4,11 +4,18 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/sasimpson/servicedemo/models"
 )
 
 //UserAPI -
-type UserAPI struct {
+type UserAPI struct{}
+
+//InitUserRoutes will initialize the routes for the user API endpoint
+func (h *Handler) InitUserRoutes(r *mux.Router) {
+	sr := r.PathPrefix("/user").Subrouter()
+	sr.Handle("", h.UserAllHandler()).Methods("GET").Name("UserGetAll")
+	sr.Handle("/{id}", h.UserGetHandler()).Methods("GET").Name("UserGetByID")
 }
 
 //UserAllHandler will return the data for a single user record
