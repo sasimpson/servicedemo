@@ -12,6 +12,7 @@ jobs:
       TEST_RESULTS: /tmp/test-results
     steps:
       - checkout
+      - run: mkdir -p ${TEST_RESULTS}
       - run: go get github.com/jstemmer/go-junit-report
       - run: go get ./...
       - run: go test -v ./... --cover | go-junit-report > ${TEST_RESULTS}/go-test-report.xml
