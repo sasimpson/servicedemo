@@ -31,3 +31,9 @@ jobs:
       - run: go build -o build/service ./cmd/service/main.go
       - store_artifacts:
           path: build/service
+workflows:
+  version: 2
+  test_and_build:
+    jobs:
+      - test
+      - build
