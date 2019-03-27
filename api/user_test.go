@@ -93,30 +93,10 @@ func TestUserGetHandler(t *testing.T) {
 	testCases := []struct {
 		desc         string
 		handler      api.Handler
-		requestID    int
+		requestID    string
 		responseCode int
 		responseBody string
 	}{
-		{
-			desc: "get no",
-			handler: api.Handler{
-				User: &mock.UserMock{
-					User: nil,
-				},
-			},
-			requestID:    1,
-			responseCode: http.StatusNotFound,
-		},
-		{
-			desc: "get error",
-			handler: api.Handler{
-				User: &mock.UserMock{
-					Error: errors.New("Unknown Error"),
-				},
-			},
-			requestID:    1,
-			responseCode: http.StatusInternalServerError,
-		},
 		{
 			desc: "get user",
 			handler: api.Handler{
@@ -129,25 +109,54 @@ func TestUserGetHandler(t *testing.T) {
 					},
 				},
 			},
-			requestID:    1,
+			requestID:    "1",
 			responseCode: http.StatusOK,
+		},
+		{
+			desc: "get none",
+			handler: api.Handler{
+				User: &mock.UserMock{
+					Error: models.ErrUserNotFound,
+				},
+			},
+			requestID:    "1",
+			responseCode: http.StatusNotFound,
+		},
+		{
+			desc: "get no id",
+			handler: api.Handler{
+				User: &mock.UserMock{},
+			},
+			requestID:    "",
+			responseCode: http.StatusBadRequest,
+		},
+		{
+			desc: "get bad id",
+			handler: api.Handler{
+				User: &mock.UserMock{
+					User: nil,
+				},
+			},
+			requestID:    "abc",
+			responseCode: http.StatusBadRequest,
+		},
+		{
+			desc: "get error",
+			handler: api.Handler{
+				User: &mock.UserMock{
+					Error: errors.New("Unknown Error"),
+				},
+			},
+			requestID:    "1",
+			responseCode: http.StatusInternalServerError,
 		},
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-			req, err := http.NewRequest("GET", fmt.Sprintf("/user/%d", tC.requestID), nil)
-			if err != nil {
-				t.Errorf("handler returned an error when it shouldn't")
-			}
-
-			requestVars := map[string]string{
-				"id": string(tC.requestID),
-			}
-			req = mux.SetURLVars(req, requestVars)
+			req, _ := http.NewRequest("GET", fmt.Sprintf("/user/%s", tC.requestID), nil)
+			req = mux.SetURLVars(req, map[string]string{"id": tC.requestID})
 			rr := httptest.NewRecorder()
-			handler := tC.handler.UserGetHandler()
-
-			handler.ServeHTTP(rr, req)
+			tC.handler.UserGetHandler().ServeHTTP(rr, req)
 			if rr.Code != tC.responseCode {
 				t.Errorf("return code does not match, wanted: %v got: %v", tC.responseCode, rr.Code)
 			}
@@ -183,6 +192,49 @@ func TestUserPostHandler(t *testing.T) {
 			if rr.Code != tC.responseCode {
 				t.Errorf("return code does not match, wanted: %v got: %v", tC.responseCode, rr.Code)
 			}
+		})
+	}
+}
+
+func TestUserRoutes(t *testing.T) {
+	testCases := []struct {
+		desc    string
+		name    string
+		path    string
+		methods []string
+	}{
+		{
+			desc:    "all users",
+			name:    "UserGetAll",
+			path:    "/user",
+			methods: []string{"GET"},
+		},
+		{
+			desc:    "get user by id",
+			name:    "UserGetByID",
+			path:    "/user/{id}",
+			methods: []string{"GET"},
+		},
+	}
+
+	h := api.Handler{}
+	routes := mux.NewRouter()
+	h.InitUserRoutes(routes)
+
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			route := routes.Get(tC.name)
+			path, _ := route.GetPathTemplate()
+			// methods, _ := route.GetMethods()
+			if tC.name != route.GetName() {
+				t.Errorf("route name does not match, expected: %v and got: %v", tC.name, route.GetName())
+			}
+			if tC.path != path {
+				t.Errorf("path does not match, expected: %v got: %v", tC.path, path)
+			}
+			// if tC.methods != methods {
+			// 	t.Errorf("methods do not match, expected: %v got: %v", tC.methods, methods)
+			// }
 		})
 	}
 }

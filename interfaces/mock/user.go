@@ -27,3 +27,8 @@ func (m *UserMock) Get(id int) (*models.User, error) {
 	}
 	return m.User, nil
 }
+
+//New mocks the New function in our interface
+func (m *UserMock) New(*models.User) (*models.User, error) {
+	panic("not implemented")
+}

@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -30,37 +29,27 @@ func (h *Handler) UserAllHandler() http.Handler {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		err = json.NewEncoder(w).Encode(users)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		json.NewEncoder(w).Encode(users)
 	})
 }
 
 //UserGetHandler will return the data for a single user record
 func (h *Handler) UserGetHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var (
-			idVar string
-			id    int
-			err   error
-			user  *models.User
-		)
+		idVar := mux.Vars(r)["id"]
 
-		vars := mux.Vars(r)
-		log.Println(vars)
-
-		if idVar := vars["id"]; idVar == "" {
-			log.Printf("idVar: %s", idVar)
+		if idVar == "" {
 			http.Error(w, "no id for user", http.StatusBadRequest)
 			return
 		}
 
-		if id, err = strconv.Atoi(idVar); err != nil {
+		id, err := strconv.Atoi(idVar)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 
-		if user, err = h.User.Get(id); err != nil {
+		user, err := h.User.Get(id)
+		if err != nil {
 			if err == models.ErrUserNotFound {
 				http.Error(w, "User not found", http.StatusNotFound)
 				return
@@ -69,16 +58,8 @@ func (h *Handler) UserGetHandler() http.Handler {
 			return
 		}
 
-		if user == nil {
-			http.Error(w, "User not found", http.StatusNotFound)
-			return
-		}
-
 		w.Header().Set("Content-Type", "application/json")
-		err = json.NewEncoder(w).Encode(user)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		json.NewEncoder(w).Encode(user)
 	})
 }
 
