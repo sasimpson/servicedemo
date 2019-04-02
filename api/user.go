@@ -46,6 +46,7 @@ func (h *Handler) UserGetHandler() http.Handler {
 		id, err := strconv.Atoi(idVar)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 
 		user, err := h.User.Get(id)
@@ -66,6 +67,21 @@ func (h *Handler) UserGetHandler() http.Handler {
 //UserNewHandler will return the data for a single user record
 func (h *Handler) UserNewHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, "Not Implemented", http.StatusNotImplemented)
+		var user models.User
+		err := json.NewDecoder(r.Body).Decode(&user)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		returnedUser, err := h.User.New(&user)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(returnedUser)
 	})
 }

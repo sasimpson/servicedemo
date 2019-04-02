@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -167,20 +168,72 @@ func TestUserGetHandler(t *testing.T) {
 func TestUserPostHandler(t *testing.T) {
 	testCases := []struct {
 		desc         string
+		userRequest  string
 		handler      api.Handler
 		responseCode int
 	}{
 		{
-			desc: "",
+			desc: "add new user",
+			userRequest: `
+				{
+					"first_name": "Test",
+					"last_name": "User",
+					"birthday": "2010-04-23T18:25:43.511Z",
+					"email": "testuser@test.com"
+				}
+			`,
+			handler: api.Handler{
+				User: &mock.UserMock{
+					User: &models.User{
+						ID:        1,
+						FirstName: "Test",
+						LastName:  "User",
+						Birthday:  time.Date(2010, 4, 23, 18, 25, 43, 511, time.UTC),
+						Email:     "testuser@test.com",
+					},
+				},
+			},
+			responseCode: http.StatusCreated,
+		},
+		{
+			desc: "new user bad json",
+			userRequest: `
+				{
+					"first_name": "Test",
+					"last_name": "User",
+					"birthday": "2010-04-23T18:25:43.511Z",
+					"email": 123
+				}
+			`,
 			handler: api.Handler{
 				User: &mock.UserMock{},
 			},
-			responseCode: http.StatusNotImplemented,
+			responseCode: http.StatusBadRequest,
+		},
+		{
+			desc: "new user error",
+			userRequest: `
+				{
+					"first_name": "Test",
+					"last_name": "User",
+					"birthday": "2010-04-23T18:25:43.511Z",
+					"email": "testuser@test.com"
+				}
+			`,
+			handler: api.Handler{
+				User: &mock.UserMock{
+					Error: models.ErrUserExists,
+				},
+			},
+			responseCode: http.StatusBadRequest,
 		},
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-			req, err := http.NewRequest("POST", "/user", nil)
+
+			requestBody := strings.NewReader(tC.userRequest)
+
+			req, err := http.NewRequest("POST", "/user", requestBody)
 			if err != nil {
 				t.Errorf("handler returned an error when it shouldn't")
 			}

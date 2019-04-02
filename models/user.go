@@ -11,6 +11,7 @@ type User struct {
 	FirstName string    `json:"first_name"`
 	LastName  string    `json:"last_name"`
 	Birthday  time.Time `json:"birthday"`
+	Email     string    `json:"email"`
 }
 
 //UserModel is the interface definition for user datastore interfaces
@@ -23,4 +24,6 @@ type UserModel interface {
 var (
 	//ErrUserNotFound for when the database cannot find the user
 	ErrUserNotFound = errors.New("User Not Found")
+	//ErrUserExists for when the exists on a POST
+	ErrUserExists = errors.New("User exists already")
 )
