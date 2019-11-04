@@ -150,3 +150,21 @@ func TestUserPostHandler(t *testing.T) {
 		})
 	}
 }
+
+func TestUserRoutes(t *testing.T) {
+	testCases := []struct {
+		desc    string
+		name    string
+		route   string
+		methods []string
+	}{
+		{
+			desc: "get ",
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+
+		})
+	}
+}
