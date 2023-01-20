@@ -12,3 +12,4 @@ var (
 	//ErrAlreadyExists is the generic "already exists" error for being wrapped
 	ErrAlreadyExists = errors.New("exists already")
 )
+
