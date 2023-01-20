@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -8,15 +9,17 @@ import (
 	"github.com/sasimpson/servicedemo/interfaces/mock"
 )
 
-//main will assemble and start our service as well as handle all the configuration bits
+// main will assemble and start our service as well as handle all the configuration bits
 func main() {
 
-	h := api.Handler{
-		User: &mock.UserMock{},
+	userAPI := api.UserAPI{
+		BaseHandler: api.BaseHandler{
+			User: &mock.UserMock{},
+		},
 	}
 
 	routes := mux.NewRouter()
-	h.InitUserRoutes(routes)
+	userAPI.InitRoutes(routes)
 
-	http.ListenAndServe(":8080", routes)
+	log.Fatal(http.ListenAndServe(":8080", routes))
 }

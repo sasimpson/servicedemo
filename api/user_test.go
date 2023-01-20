@@ -19,15 +19,17 @@ import (
 func TestUserAllHandler(t *testing.T) {
 	testCases := []struct {
 		desc         string
-		handler      api.Handler
+		handler      api.UserAPI
 		responseCode int
 		responseBody string
 	}{
 		{
 			desc: "get no users",
-			handler: api.Handler{
-				User: &mock.UserMock{
-					Users: &[]models.User{},
+			handler: api.UserAPI{
+				BaseHandler: api.BaseHandler{
+					User: &mock.UserMock{
+						Users: &[]models.User{},
+					},
 				},
 			},
 			responseCode: http.StatusOK,
@@ -35,29 +37,33 @@ func TestUserAllHandler(t *testing.T) {
 		},
 		{
 			desc: "get error",
-			handler: api.Handler{
-				User: &mock.UserMock{
-					Error: errors.New("Unknown Error"),
+			handler: api.UserAPI{
+				BaseHandler: api.BaseHandler{
+					User: &mock.UserMock{
+						Error: errors.New("unknown error"),
+					},
 				},
 			},
 			responseCode: http.StatusInternalServerError,
 		},
 		{
 			desc: "get 2 users",
-			handler: api.Handler{
-				User: &mock.UserMock{
-					Users: &[]models.User{
-						models.User{
-							ID:        1,
-							FirstName: "Test",
-							LastName:  "Tester",
-							Birthday:  time.Date(1979, 1, 19, 0, 0, 0, 0, time.UTC),
-						},
-						models.User{
-							ID:        2,
-							FirstName: "Tester",
-							LastName:  "Testing",
-							Birthday:  time.Date(1978, 2, 20, 0, 0, 0, 0, time.UTC),
+			handler: api.UserAPI{
+				BaseHandler: api.BaseHandler{
+					User: &mock.UserMock{
+						Users: &[]models.User{
+							{
+								ID:        1,
+								FirstName: "Test",
+								LastName:  "Tester",
+								Birthday:  time.Date(1979, 1, 19, 0, 0, 0, 0, time.UTC),
+							},
+							{
+								ID:        2,
+								FirstName: "Tester",
+								LastName:  "Testing",
+								Birthday:  time.Date(1978, 2, 20, 0, 0, 0, 0, time.UTC),
+							},
 						},
 					},
 				},
@@ -93,20 +99,22 @@ func TestUserAllHandler(t *testing.T) {
 func TestUserGetHandler(t *testing.T) {
 	testCases := []struct {
 		desc         string
-		handler      api.Handler
+		handler      api.UserAPI
 		requestID    string
 		responseCode int
 		responseBody string
 	}{
 		{
 			desc: "get user",
-			handler: api.Handler{
-				User: &mock.UserMock{
-					User: &models.User{
-						ID:        1,
-						FirstName: "test",
-						LastName:  "user",
-						Birthday:  time.Date(1978, 2, 20, 0, 0, 0, 0, time.UTC),
+			handler: api.UserAPI{
+				BaseHandler: api.BaseHandler{
+					User: &mock.UserMock{
+						User: &models.User{
+							ID:        1,
+							FirstName: "test",
+							LastName:  "user",
+							Birthday:  time.Date(1978, 2, 20, 0, 0, 0, 0, time.UTC),
+						},
 					},
 				},
 			},
@@ -115,9 +123,11 @@ func TestUserGetHandler(t *testing.T) {
 		},
 		{
 			desc: "get none",
-			handler: api.Handler{
-				User: &mock.UserMock{
-					Error: models.ErrUserNotFound,
+			handler: api.UserAPI{
+				BaseHandler: api.BaseHandler{
+					User: &mock.UserMock{
+						Error: models.ErrNotFound,
+					},
 				},
 			},
 			requestID:    "1",
@@ -125,17 +135,21 @@ func TestUserGetHandler(t *testing.T) {
 		},
 		{
 			desc: "get no id",
-			handler: api.Handler{
-				User: &mock.UserMock{},
+			handler: api.UserAPI{
+				BaseHandler: api.BaseHandler{
+					User: &mock.UserMock{},
+				},
 			},
 			requestID:    "",
 			responseCode: http.StatusBadRequest,
 		},
 		{
 			desc: "get bad id",
-			handler: api.Handler{
-				User: &mock.UserMock{
-					User: nil,
+			handler: api.UserAPI{
+				BaseHandler: api.BaseHandler{
+					User: &mock.UserMock{
+						User: nil,
+					},
 				},
 			},
 			requestID:    "abc",
@@ -143,9 +157,11 @@ func TestUserGetHandler(t *testing.T) {
 		},
 		{
 			desc: "get error",
-			handler: api.Handler{
-				User: &mock.UserMock{
-					Error: errors.New("Unknown Error"),
+			handler: api.UserAPI{
+				BaseHandler: api.BaseHandler{
+					User: &mock.UserMock{
+						Error: errors.New("unknown error"),
+					},
 				},
 			},
 			requestID:    "1",
@@ -169,7 +185,7 @@ func TestUserPostHandler(t *testing.T) {
 	testCases := []struct {
 		desc         string
 		userRequest  string
-		handler      api.Handler
+		handler      api.UserAPI
 		responseCode int
 	}{
 		{
@@ -182,14 +198,16 @@ func TestUserPostHandler(t *testing.T) {
 					"email": "testuser@test.com"
 				}
 			`,
-			handler: api.Handler{
-				User: &mock.UserMock{
-					User: &models.User{
-						ID:        1,
-						FirstName: "Test",
-						LastName:  "User",
-						Birthday:  time.Date(2010, 4, 23, 18, 25, 43, 511, time.UTC),
-						Email:     "testuser@test.com",
+			handler: api.UserAPI{
+				BaseHandler: api.BaseHandler{
+					User: &mock.UserMock{
+						User: &models.User{
+							ID:        1,
+							FirstName: "Test",
+							LastName:  "User",
+							Birthday:  time.Date(2010, 4, 23, 18, 25, 43, 511, time.UTC),
+							Email:     "testuser@test.com",
+						},
 					},
 				},
 			},
@@ -205,8 +223,10 @@ func TestUserPostHandler(t *testing.T) {
 					"email": 123
 				}
 			`,
-			handler: api.Handler{
-				User: &mock.UserMock{},
+			handler: api.UserAPI{
+				BaseHandler: api.BaseHandler{
+					User: &mock.UserMock{},
+				},
 			},
 			responseCode: http.StatusBadRequest,
 		},
@@ -220,9 +240,11 @@ func TestUserPostHandler(t *testing.T) {
 					"email": "testuser@test.com"
 				}
 			`,
-			handler: api.Handler{
-				User: &mock.UserMock{
-					Error: models.ErrUserExists,
+			handler: api.UserAPI{
+				BaseHandler: api.BaseHandler{
+					User: &mock.UserMock{
+						Error: models.ErrAlreadyExists,
+					},
 				},
 			},
 			responseCode: http.StatusBadRequest,
@@ -270,9 +292,9 @@ func TestUserRoutes(t *testing.T) {
 		},
 	}
 
-	h := api.Handler{}
+	h := api.UserAPI{}
 	routes := mux.NewRouter()
-	h.InitUserRoutes(routes)
+	h.InitRoutes(routes)
 
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
