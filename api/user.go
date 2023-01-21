@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	"github.com/swaggest/openapi-go/openapi3"
 	"net/http"
 	"strconv"
 
@@ -13,6 +14,33 @@ import (
 // UserAPI -
 type UserAPI struct {
 	BaseHandler
+}
+
+func (api *UserAPI) InitOpenAPI(r *openapi3.Reflector) {
+	//Paths:
+	// GET /users
+	getAllOp := openapi3.Operation{}
+	getAllOp.WithDescription("Get all users")
+	r.SetRequest(&getAllOp, nil, http.MethodGet)
+	r.SetJSONResponse(&getAllOp, new([]models.User), http.StatusOK)
+	r.SetJSONResponse(&getAllOp, new([]models.User), http.StatusInternalServerError)
+	r.Spec.AddOperation(http.MethodGet, "/user", getAllOp)
+
+	// GET /users/:id
+	type getReq struct {
+		ID string `path:"id"`
+	}
+	getOp := openapi3.Operation{}
+	getOp.WithDescription("Get user by id")
+	r.SetRequest(&getOp, new(getReq), http.MethodGet)
+	r.SetJSONResponse(&getOp, new(models.User), http.StatusOK)
+	r.SetJSONResponse(&getOp, nil, http.StatusBadRequest)
+	r.SetJSONResponse(&getOp, nil, http.StatusNotFound)
+	r.SetJSONResponse(&getOp, nil, http.StatusInternalServerError)
+	err := r.Spec.AddOperation(http.MethodGet, "/user/{id}", getOp)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // InitRoutes will initialize the routes for the user API endpoint
