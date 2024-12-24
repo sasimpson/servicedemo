@@ -8,6 +8,9 @@ The purpose of this project is to demostrate how I build HTTP-based services.  I
 ### .circleci 
 CircleCI is used to deal with CI/CD, is pretty easy to use, and has some nice features.  
 
+### .github/workflows
+GitHub Actions definition, will test and build.
+
 ### api
 API is the directory that contains all the service endpoint implementations
 
