@@ -14,7 +14,7 @@ func main() {
 
 	userAPI := api.UserAPI{
 		BaseHandler: api.BaseHandler{
-			User: &mock.UserMock{},
+			User: &mock.User{},
 		},
 	}
 

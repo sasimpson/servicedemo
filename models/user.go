@@ -16,8 +16,8 @@ type User struct {
 	BaseModel
 }
 
-// UserModel is the interface definition for user datastore interfaces
-type UserModel interface {
+// UserDataInterface is the interface definition for user datastore interfaces
+type UserDataInterface interface {
 	All() (*[]User, error)
 	Get(id uuid.UUID) (*User, error)
 	New(*User) (*User, error)

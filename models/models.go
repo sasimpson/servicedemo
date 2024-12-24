@@ -14,6 +14,7 @@ var (
 	ErrNotFound = errors.New("not found")
 	//ErrAlreadyExists is the generic "already exists" error for being wrapped
 	ErrAlreadyExists = errors.New("exists already")
+	ErrNilValue      = errors.New("nil value")
 )
 
 type BaseModel struct {

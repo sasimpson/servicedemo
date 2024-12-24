@@ -33,7 +33,7 @@ func TestUserAllHandler(t *testing.T) {
 			desc: "get no users",
 			handler: api.UserAPI{
 				BaseHandler: api.BaseHandler{
-					User: &mock.UserMock{
+					User: &mock.User{
 						Users: &[]models.User{},
 					},
 				},
@@ -45,7 +45,7 @@ func TestUserAllHandler(t *testing.T) {
 			desc: "get error",
 			handler: api.UserAPI{
 				BaseHandler: api.BaseHandler{
-					User: &mock.UserMock{
+					User: &mock.User{
 						Error: errors.New("unknown error"),
 					},
 				},
@@ -56,7 +56,7 @@ func TestUserAllHandler(t *testing.T) {
 			desc: "get 2 users",
 			handler: api.UserAPI{
 				BaseHandler: api.BaseHandler{
-					User: &mock.UserMock{
+					User: &mock.User{
 						Users: &[]models.User{
 							{
 								ID:        testUUID1,
@@ -114,7 +114,7 @@ func TestUserGetHandler(t *testing.T) {
 			desc: "get user",
 			handler: api.UserAPI{
 				BaseHandler: api.BaseHandler{
-					User: &mock.UserMock{
+					User: &mock.User{
 						User: &models.User{
 							ID:        testUUID1,
 							FirstName: "test",
@@ -131,7 +131,7 @@ func TestUserGetHandler(t *testing.T) {
 			desc: "get none",
 			handler: api.UserAPI{
 				BaseHandler: api.BaseHandler{
-					User: &mock.UserMock{
+					User: &mock.User{
 						Error: models.ErrNotFound,
 					},
 				},
@@ -143,7 +143,7 @@ func TestUserGetHandler(t *testing.T) {
 			desc: "get no id",
 			handler: api.UserAPI{
 				BaseHandler: api.BaseHandler{
-					User: &mock.UserMock{},
+					User: &mock.User{},
 				},
 			},
 			requestID:    "",
@@ -153,7 +153,7 @@ func TestUserGetHandler(t *testing.T) {
 			desc: "get bad id",
 			handler: api.UserAPI{
 				BaseHandler: api.BaseHandler{
-					User: &mock.UserMock{
+					User: &mock.User{
 						User: nil,
 					},
 				},
@@ -165,7 +165,7 @@ func TestUserGetHandler(t *testing.T) {
 			desc: "get error",
 			handler: api.UserAPI{
 				BaseHandler: api.BaseHandler{
-					User: &mock.UserMock{
+					User: &mock.User{
 						Error: errors.New("unknown error"),
 					},
 				},
@@ -206,7 +206,7 @@ func TestUserPostHandler(t *testing.T) {
 			`,
 			handler: api.UserAPI{
 				BaseHandler: api.BaseHandler{
-					User: &mock.UserMock{
+					User: &mock.User{
 						User: &models.User{
 							ID:        testUUID1,
 							FirstName: "Test",
@@ -231,7 +231,7 @@ func TestUserPostHandler(t *testing.T) {
 			`,
 			handler: api.UserAPI{
 				BaseHandler: api.BaseHandler{
-					User: &mock.UserMock{},
+					User: &mock.User{},
 				},
 			},
 			responseCode: http.StatusBadRequest,
@@ -248,7 +248,7 @@ func TestUserPostHandler(t *testing.T) {
 			`,
 			handler: api.UserAPI{
 				BaseHandler: api.BaseHandler{
-					User: &mock.UserMock{
+					User: &mock.User{
 						Error: models.ErrAlreadyExists,
 					},
 				},

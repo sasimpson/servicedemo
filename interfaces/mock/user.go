@@ -6,23 +6,24 @@ import (
 	"github.com/sasimpson/servicedemo/models"
 )
 
-// UserMock structure contains all the things that each of the mocks might hand back.
-type UserMock struct {
+// User structure contains all the things that each of the mocks might hand back.
+// Implements UserDataInterface
+type User struct {
 	Users *[]models.User
 	User  *models.User
 	Error error
 }
 
-// All mocks the All function in our interface
-func (m *UserMock) All() (*[]models.User, error) {
+// All mocks All function in our interface
+func (m *User) All() (*[]models.User, error) {
 	if m.Error != nil {
 		return nil, m.Error
 	}
 	return m.Users, nil
 }
 
-// Get mocks the Get function in our interface
-func (m *UserMock) Get(_ uuid.UUID) (*models.User, error) {
+// Get mocks Get function in our interface
+func (m *User) Get(_ uuid.UUID) (*models.User, error) {
 	if m.Error != nil {
 		return nil, m.Error
 	}
@@ -32,8 +33,8 @@ func (m *UserMock) Get(_ uuid.UUID) (*models.User, error) {
 	return m.User, nil
 }
 
-// New mocks the New function in our interface
-func (m *UserMock) New(*models.User) (*models.User, error) {
+// New mocks New function in our interface
+func (m *User) New(*models.User) (*models.User, error) {
 	if m.Error != nil {
 		return nil, m.Error
 	}
