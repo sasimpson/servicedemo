@@ -9,9 +9,6 @@ jobs:
     executor:
       name: go/default
       tag: 1.23.4
-    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
-    environment:
-      TEST_RESULTS: /tmp/test-results
     steps:
       - checkout
       - go/mod-download
@@ -19,6 +16,6 @@ jobs:
           covermode: atomic
           failfast: true
 workflows:
-  test:
+  main:
     jobs:
       - test
