@@ -1,5 +1,6 @@
 # Service Demo
 [![CircleCI](https://circleci.com/gh/sasimpson/servicedemo/tree/master.svg?style=svg)](https://circleci.com/gh/sasimpson/servicedemo/tree/master)
+![example workflow](https://github.com/sasimpson/servicedemo/actions/workflows/go.yml/badge.svg)
 
 The purpose of this project is to demostrate how I build HTTP-based services.  I may be doing everything wrong, but this has seemed to work and I will explain how through some blog posts.  This project will show how to build these, from the ground up, use a database to store data, and include some deployment strategies.  
 
