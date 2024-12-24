@@ -2,10 +2,11 @@ package mock
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/sasimpson/servicedemo/models"
 )
 
-// UserMock structure contains all of the things that each of the mocks might hand back.
+// UserMock structure contains all the things that each of the mocks might hand back.
 type UserMock struct {
 	Users *[]models.User
 	User  *models.User
@@ -21,7 +22,7 @@ func (m *UserMock) All() (*[]models.User, error) {
 }
 
 // Get mocks the Get function in our interface
-func (m *UserMock) Get(_ int) (*models.User, error) {
+func (m *UserMock) Get(_ uuid.UUID) (*models.User, error) {
 	if m.Error != nil {
 		return nil, m.Error
 	}

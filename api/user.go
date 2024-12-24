@@ -3,8 +3,8 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	"github.com/google/uuid"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/sasimpson/servicedemo/models"
@@ -50,7 +50,7 @@ func (api *BaseHandler) UserGetHandler() http.Handler {
 			return
 		}
 
-		id, err := strconv.Atoi(idVar)
+		id, err := uuid.Parse(idVar)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return

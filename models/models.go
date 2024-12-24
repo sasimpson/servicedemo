@@ -1,6 +1,9 @@
 package models
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 // Env structure holds our environment settings
 type Env struct {
@@ -13,3 +16,7 @@ var (
 	ErrAlreadyExists = errors.New("exists already")
 )
 
+type BaseModel struct {
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}

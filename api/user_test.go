@@ -3,6 +3,7 @@ package api_test
 import (
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -14,6 +15,11 @@ import (
 
 	"github.com/sasimpson/servicedemo/api"
 	"github.com/sasimpson/servicedemo/interfaces/mock"
+)
+
+var (
+	testUUID1 = uuid.New()
+	testUUID2 = uuid.New()
 )
 
 func TestUserAllHandler(t *testing.T) {
@@ -53,13 +59,13 @@ func TestUserAllHandler(t *testing.T) {
 					User: &mock.UserMock{
 						Users: &[]models.User{
 							{
-								ID:        1,
+								ID:        testUUID1,
 								FirstName: "Test",
 								LastName:  "Tester",
 								Birthday:  time.Date(1979, 1, 19, 0, 0, 0, 0, time.UTC),
 							},
 							{
-								ID:        2,
+								ID:        testUUID2,
 								FirstName: "Tester",
 								LastName:  "Testing",
 								Birthday:  time.Date(1978, 2, 20, 0, 0, 0, 0, time.UTC),
@@ -110,7 +116,7 @@ func TestUserGetHandler(t *testing.T) {
 				BaseHandler: api.BaseHandler{
 					User: &mock.UserMock{
 						User: &models.User{
-							ID:        1,
+							ID:        testUUID1,
 							FirstName: "test",
 							LastName:  "user",
 							Birthday:  time.Date(1978, 2, 20, 0, 0, 0, 0, time.UTC),
@@ -118,7 +124,7 @@ func TestUserGetHandler(t *testing.T) {
 					},
 				},
 			},
-			requestID:    "1",
+			requestID:    testUUID1.String(),
 			responseCode: http.StatusOK,
 		},
 		{
@@ -130,7 +136,7 @@ func TestUserGetHandler(t *testing.T) {
 					},
 				},
 			},
-			requestID:    "1",
+			requestID:    testUUID1.String(),
 			responseCode: http.StatusNotFound,
 		},
 		{
@@ -164,7 +170,7 @@ func TestUserGetHandler(t *testing.T) {
 					},
 				},
 			},
-			requestID:    "1",
+			requestID:    testUUID1.String(),
 			responseCode: http.StatusInternalServerError,
 		},
 	}
@@ -202,7 +208,7 @@ func TestUserPostHandler(t *testing.T) {
 				BaseHandler: api.BaseHandler{
 					User: &mock.UserMock{
 						User: &models.User{
-							ID:        1,
+							ID:        testUUID1,
 							FirstName: "Test",
 							LastName:  "User",
 							Birthday:  time.Date(2010, 4, 23, 18, 25, 43, 511, time.UTC),
