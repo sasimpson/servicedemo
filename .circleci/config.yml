@@ -18,7 +18,6 @@ jobs:
       - go/test:
           covermode: atomic
           failfast: true
-      - go/build
 workflows:
   test:
     jobs:
