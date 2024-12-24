@@ -20,8 +20,6 @@ jobs:
           failfast: true
       - go/build
 workflows:
-  version: 2
-  test_and_build:
+  test:
     jobs:
       - test
-      - build
